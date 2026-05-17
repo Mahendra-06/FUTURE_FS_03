@@ -1,0 +1,66 @@
+[
+  {
+    "_id": "ord-q1d78hp6n",
+    "items": [
+      {
+        "name": "Honey Oat Latte",
+        "qty": 1,
+        "price": "$6.50"
+      }
+    ],
+    "totalCost": 6.5,
+    "customerName": "mahi",
+    "customerPhone": "9494652846",
+    "tableNumber": "6",
+    "paymentMethod": "Bill to Table",
+    "status": "Pending",
+    "createdAt": "2026-05-17T16:28:58.489Z",
+    "updatedAt": "2026-05-17T16:28:58.489Z"
+  },
+  {
+    "_id": "ord-k46el4g6c",
+    "items": [
+      {
+        "name": "Ethiopian Yirgacheffe",
+        "qty": 1,
+        "price": "$7.50"
+      },
+      {
+        "name": "Noir Signature Espresso",
+        "qty": 1,
+        "price": "$5.00"
+      }
+    ],
+    "totalCost": 12.5,
+    "customerName": "Diana Prince",
+    "customerPhone": "+1 (555) 012-9843",
+    "tableNumber": "Bar Seat A",
+    "paymentMethod": "Direct Pay",
+    "status": "Served",
+    "createdAt": "2026-05-17T14:40:42.829Z",
+    "updatedAt": "2026-05-17T14:41:15.152Z"
+  },
+  {
+    "_id": "ord-wc0e84pph",
+    "items": [
+      {
+        "name": "Ethiopian Yirgacheffe",
+        "qty": 1,
+        "price": "$7.50"
+      },
+      {
+        "name": "Honey Oat Latte",
+        "qty": 2,
+        "price": "$6.50"
+      }
+    ],
+    "totalCost": 20.5,
+    "customerName": "Bruce Wayne",
+    "customerPhone": "+1 (555) 017-3829",
+    "tableNumber": "Table 7",
+    "paymentMethod": "Bill to Table",
+    "status": "Served",
+    "createdAt": "2026-05-17T14:03:55.078Z",
+    "updatedAt": "2026-05-17T14:05:49.857Z"
+  }
+]

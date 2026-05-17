@@ -1,0 +1,13 @@
+[
+  {
+    "_id": "res-ktk2d15h8",
+    "name": "Lord Tennyson",
+    "email": "tennyson@jazz.com",
+    "phone": "1234567890",
+    "guests": 4,
+    "date": "2026-06-01",
+    "time": "09:00 PM",
+    "createdAt": "2026-05-17T13:34:01.096Z",
+    "updatedAt": "2026-05-17T13:34:01.097Z"
+  }
+]
