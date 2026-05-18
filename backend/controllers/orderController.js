@@ -2,7 +2,9 @@ import fs from 'fs';
 import path from 'path';
 import Order from '../models/Order.js';
 
-const DATA_DIR = path.resolve('data');
+const isVercel = !!process.env.VERCEL;
+const SOURCE_DIR = path.resolve('data');
+const DATA_DIR = isVercel ? path.join('/tmp', 'data') : SOURCE_DIR;
 const DATA_FILE = path.join(DATA_DIR, 'orders.json');
 
 // Ensure data folder and file exists
@@ -11,7 +13,16 @@ const initFallbackStorage = () => {
     fs.mkdirSync(DATA_DIR, { recursive: true });
   }
   if (!fs.existsSync(DATA_FILE)) {
-    fs.writeFileSync(DATA_FILE, JSON.stringify([], null, 2), 'utf-8');
+    const sourceFile = path.join(SOURCE_DIR, 'orders.json');
+    if (isVercel && fs.existsSync(sourceFile)) {
+      try {
+        fs.copyFileSync(sourceFile, DATA_FILE);
+      } catch (err) {
+        fs.writeFileSync(DATA_FILE, JSON.stringify([], null, 2), 'utf-8');
+      }
+    } else {
+      fs.writeFileSync(DATA_FILE, JSON.stringify([], null, 2), 'utf-8');
+    }
   }
 };
 
