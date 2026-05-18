@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
+import { getApiUrl } from '../config';
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState('reservations'); // 'reservations' or 'orders'
@@ -28,8 +29,8 @@ export default function AdminDashboard() {
       setLoading(true);
       setError('');
       
-      const resPromise = axios.get('http://localhost:5000/api/reservations');
-      const orderPromise = axios.get('http://localhost:5000/api/orders');
+      const resPromise = axios.get(getApiUrl('/api/reservations'));
+      const orderPromise = axios.get(getApiUrl('/api/orders'));
       
       const [resResponse, orderResponse] = await Promise.all([resPromise, orderPromise]);
 
@@ -66,7 +67,7 @@ export default function AdminDashboard() {
     if (!window.confirm('Are you sure you want to cancel this table reservation?')) return;
 
     try {
-      const response = await axios.delete(`http://localhost:5000/api/reservations/${id}`);
+      const response = await axios.delete(getApiUrl(`/api/reservations/${id}`));
       if (response.data && response.data.success) {
         setReservations((prev) => prev.filter((res) => res._id !== id));
       }
@@ -77,7 +78,7 @@ export default function AdminDashboard() {
 
   const handleUpdateOrderStatus = async (id, newStatus) => {
     try {
-      const response = await axios.put(`http://localhost:5000/api/orders/${id}`, { status: newStatus });
+      const response = await axios.put(getApiUrl(`/api/orders/${id}`), { status: newStatus });
       if (response.data && response.data.success) {
         setOrders((prev) =>
           prev.map((ord) => (ord._id === id ? { ...ord, status: newStatus } : ord))
@@ -92,7 +93,7 @@ export default function AdminDashboard() {
     if (!window.confirm('Are you sure you want to delete this order?')) return;
 
     try {
-      const response = await axios.delete(`http://localhost:5000/api/orders/${id}`);
+      const response = await axios.delete(getApiUrl(`/api/orders/${id}`));
       if (response.data && response.data.success) {
         setOrders((prev) => prev.filter((ord) => ord._id !== id));
       }

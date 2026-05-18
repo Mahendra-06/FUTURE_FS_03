@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react';
 import { motion, AnimatePresence, useInView } from 'framer-motion';
 import axios from 'axios';
+import { getApiUrl } from '../config';
 
 const inputClasses = `
   w-full bg-charcoal-dark/50 border border-gold-subtle rounded-xl px-4 py-3
@@ -53,7 +54,7 @@ export default function Contact() {
     setIsSubmitting(true);
 
     try {
-      const response = await axios.post('http://localhost:5000/api/contact', formData);
+      const response = await axios.post(getApiUrl('/api/contact'), formData);
 
       if (response.data && response.data.success) {
         setIsSubmitting(false);

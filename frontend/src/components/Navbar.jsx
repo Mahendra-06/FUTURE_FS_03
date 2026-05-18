@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
+import { getApiUrl } from '../config';
 
 const NAV_LINKS = [
   { label: 'Home',    to: '/'        },
@@ -142,7 +143,7 @@ export default function Navbar({ cart = [], removeFromCart, clearCart }) {
         paymentMethod: paymentMethod,
       };
 
-      const response = await axios.post('http://localhost:5000/api/orders', orderData);
+      const response = await axios.post(getApiUrl('/api/orders'), orderData);
 
       if (response.data && response.data.success) {
         setPlacedOrderDetails(response.data.data);

@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react';
 import { motion, AnimatePresence, useInView } from 'framer-motion';
 import axios from 'axios';
+import { getApiUrl } from '../config';
 
 /* ── Custom Select/Input Styling Helpers ─────────────────── */
 const inputClasses = `
@@ -69,7 +70,7 @@ export default function Reservation() {
     setIsSubmitting(true);
 
     try {
-      const response = await axios.post('http://localhost:5000/api/reservation', formData);
+      const response = await axios.post(getApiUrl('/api/reservation'), formData);
 
       if (response.data && response.data.success) {
         setIsSubmitting(false);
