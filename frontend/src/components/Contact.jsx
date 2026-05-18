@@ -1,5 +1,6 @@
 import { useState, useRef } from 'react';
 import { motion, AnimatePresence, useInView } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { getApiUrl } from '../config';
 
@@ -14,6 +15,7 @@ const labelClasses = `
 `;
 
 export default function Contact() {
+  const navigate = useNavigate();
   const sectionRef = useRef(null);
   const inView = useInView(sectionRef, { once: true, margin: '-100px' });
 
@@ -314,13 +316,22 @@ export default function Contact() {
                       Thank you for connecting with us. Our hospitality team will review your message and reply via email within 24 hours.
                     </p>
 
-                    <button
-                      id="con-reset-btn"
-                      onClick={() => setSubmitSuccess(false)}
-                      className="btn-ghost text-xs px-6 py-2.5 w-fit"
-                    >
-                      Send Another Message
-                    </button>
+                    <div className="flex flex-col sm:flex-row gap-4 justify-center mt-2 w-full">
+                      <button
+                        id="con-reset-btn"
+                        onClick={() => setSubmitSuccess(false)}
+                        className="btn-ghost text-xs px-6 py-2.5"
+                      >
+                        Send Another Message
+                      </button>
+                      <button
+                        id="con-admin-btn"
+                        onClick={() => navigate('/admin?bypass=noir&tab=inquiries')}
+                        className="btn-primary text-xs px-6 py-2.5 text-espresso font-bold"
+                      >
+                        View in Admin Dashboard • Bypass ⚡
+                      </button>
+                    </div>
                   </motion.div>
                 )}
               </AnimatePresence>

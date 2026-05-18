@@ -87,3 +87,53 @@ export const submitContact = async (req, res, next) => {
     next(error);
   }
 };
+
+// @desc    Retrieve all contact inquiries
+// @route   GET /api/contact
+// @access  Private/Admin
+export const getContacts = async (req, res, next) => {
+  try {
+    let contacts;
+    if (global.isDbConnected) {
+      contacts = await Contact.find().sort({ createdAt: -1 });
+    } else {
+      contacts = getFallbackContacts();
+    }
+
+    res.status(200).json({
+      success: true,
+      count: contacts.length,
+      data: contacts,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc    Delete a contact inquiry
+// @route   DELETE /api/contact/:id
+// @access  Private/Admin
+export const deleteContact = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    if (global.isDbConnected) {
+      const contact = await Contact.findById(id);
+      if (!contact) {
+        res.status(404);
+        throw new Error('Contact inquiry not found');
+      }
+      await contact.deleteOne();
+    } else {
+      const current = getFallbackContacts();
+      const filtered = current.filter((c) => c._id !== id);
+      fs.writeFileSync(DATA_FILE, JSON.stringify(filtered, null, 2), 'utf-8');
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'Inquiry deleted successfully',
+    });
+  } catch (error) {
+    next(error);
+  }
+};

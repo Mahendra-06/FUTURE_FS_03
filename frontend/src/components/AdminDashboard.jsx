@@ -4,9 +4,10 @@ import axios from 'axios';
 import { getApiUrl } from '../config';
 
 export default function AdminDashboard() {
-  const [activeTab, setActiveTab] = useState('reservations'); // 'reservations' or 'orders'
+  const [activeTab, setActiveTab] = useState('reservations'); // 'reservations', 'orders', or 'inquiries'
   const [reservations, setReservations] = useState([]);
   const [orders, setOrders] = useState([]);
+  const [contacts, setContacts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [passcode, setPasscode] = useState('');
@@ -31,14 +32,22 @@ export default function AdminDashboard() {
       
       const resPromise = axios.get(getApiUrl('/api/reservations'));
       const orderPromise = axios.get(getApiUrl('/api/orders'));
+      const contactPromise = axios.get(getApiUrl('/api/contact'));
       
-      const [resResponse, orderResponse] = await Promise.all([resPromise, orderPromise]);
+      const [resResponse, orderResponse, contactResponse] = await Promise.all([
+        resPromise,
+        orderPromise,
+        contactPromise
+      ]);
 
       if (resResponse.data && resResponse.data.success) {
         setReservations(resResponse.data.data);
       }
       if (orderResponse.data && orderResponse.data.success) {
         setOrders(orderResponse.data.data);
+      }
+      if (contactResponse.data && contactResponse.data.success) {
+        setContacts(contactResponse.data.data);
       }
       
       setLoading(false);
@@ -53,7 +62,12 @@ export default function AdminDashboard() {
     const params = new URLSearchParams(window.location.search);
     if (params.get('bypass') === 'noir') {
       setIsAuthenticated(true);
-      setActiveTab('orders'); // Instant load orders tab so they see their ordered item!
+      const targetTab = params.get('tab');
+      if (targetTab === 'inquiries') {
+        setActiveTab('inquiries');
+      } else {
+        setActiveTab('orders'); // Instant load orders tab so they see their ordered item!
+      }
     }
   }, []);
 
@@ -99,6 +113,19 @@ export default function AdminDashboard() {
       }
     } catch (err) {
       alert(err.response?.data?.message || 'Could not cancel order.');
+    }
+  };
+
+  const handleDeleteContact = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this message inquiry?')) return;
+
+    try {
+      const response = await axios.delete(getApiUrl(`/api/contact/${id}`));
+      if (response.data && response.data.success) {
+        setContacts((prev) => prev.filter((c) => c._id !== id));
+      }
+    } catch (err) {
+      alert(err.response?.data?.message || 'Could not delete contact inquiry.');
     }
   };
 
@@ -241,6 +268,14 @@ export default function AdminDashboard() {
           >
             Artisanal Orders ({orders.length})
           </button>
+          <button
+            onClick={() => setActiveTab('inquiries')}
+            className={`font-display text-sm font-bold tracking-wider uppercase transition-all duration-300 pb-2 border-b-2 ${
+              activeTab === 'inquiries' ? 'border-gold text-gold' : 'border-transparent text-cream/50 hover:text-cream'
+            }`}
+          >
+            📨 Guest Inquiries ({contacts.length})
+          </button>
         </div>
 
         {/* Main Log Box */}
@@ -326,7 +361,7 @@ export default function AdminDashboard() {
                 </table>
               </div>
             )
-          ) : (
+          ) : activeTab === 'orders' ? (
             /* Orders Tab */
             orders.length === 0 ? (
               <div className="py-24 text-center">
@@ -448,6 +483,69 @@ export default function AdminDashboard() {
                                 Delete
                               </button>
                             </div>
+                          </td>
+                        </motion.tr>
+                      ))}
+                    </AnimatePresence>
+                  </tbody>
+                </table>
+              </div>
+            )
+          ) : (
+            /* Contact Inquiries Tab */
+            contacts.length === 0 ? (
+              <div className="py-24 text-center">
+                <svg className="w-12 h-12 text-caramel mx-auto mb-4 opacity-75" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+                </svg>
+                <h4 className="font-display text-lg font-medium text-cream/80">No Guest Inquiries Yet</h4>
+                <p className="font-body text-xs text-cream/60 mt-1 max-w-xs mx-auto">
+                  Any feedback or message sent via the contact form on the site will populate inside this operational panel in real-time.
+                </p>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr style={{ backgroundColor: '#1A0C05', borderBottom: '1.5px solid rgba(232, 184, 109, 0.45)' }} className="text-xs uppercase tracking-widest font-extrabold">
+                      <th style={{ color: '#E8B86D', padding: '18px 24px' }}>Sender &amp; Contact</th>
+                      <th style={{ color: '#E8B86D', padding: '18px 24px' }}>Subject</th>
+                      <th style={{ color: '#E8B86D', padding: '18px 24px' }}>Message Details</th>
+                      <th style={{ color: '#E8B86D', padding: '18px 24px' }}>Date Received</th>
+                      <th style={{ color: '#E8B86D', padding: '18px 24px', textAlign: 'right' }}>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gold-subtle/30 font-body text-xs text-cream/90">
+                    <AnimatePresence>
+                      {contacts.map((con) => (
+                        <motion.tr
+                          key={con._id}
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0, scale: 0.95 }}
+                          className="hover:bg-white/[0.03] transition-colors duration-200"
+                        >
+                          <td className="py-4 px-6">
+                            <div style={{ color: '#FFFFFF', fontWeight: 'bold', fontSize: '14px' }}>{con.name}</div>
+                            <div style={{ color: '#FAF7F0', opacity: 0.9, fontSize: '11px', marginTop: '3px', fontWeight: '600' }}>{con.email}</div>
+                          </td>
+                          <td style={{ color: '#FFD700', fontWeight: '700', fontSize: '13px' }} className="py-4 px-6">
+                            {con.subject}
+                          </td>
+                          <td style={{ color: '#FFFFFF', opacity: 0.85, fontSize: '12px', minWidth: '220px', whiteSpace: 'normal', wordBreak: 'break-word' }} className="py-4 px-6 max-w-sm">
+                            "{con.message}"
+                          </td>
+                          <td style={{ color: '#FAF7F0', opacity: 0.75 }} className="py-4 px-6">
+                            {new Date(con.createdAt).toLocaleDateString([], { month: 'short', day: 'numeric' })} &bull; {new Date(con.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                          </td>
+                          <td className="py-4 px-6 text-right">
+                            <button
+                              onClick={() => handleDeleteContact(con._id)}
+                              style={{ color: '#FF8A8A', border: '1.5px solid #FF5252', backgroundColor: 'rgba(255, 82, 82, 0.15)' }}
+                              className="hover:bg-red-600 hover:text-white text-[9px] font-extrabold uppercase tracking-widest transition-all duration-300 px-3 py-1.5 rounded-lg shadow-sm"
+                            >
+                              Delete Inquiry
+                            </button>
                           </td>
                         </motion.tr>
                       ))}
