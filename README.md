@@ -56,6 +56,40 @@ graph TD
 
 ---
 
+## 🎛️ Concierge Admin Dashboard Guide
+
+The **Concierge Admin Dashboard** acts as the central operation hub for café and lounge staff to track incoming orders, monitor seating tables, and manage reservations.
+
+### 🔑 Authentication & Quick Access
+* **Direct URL**: Navigate to `/admin` (e.g. `http://localhost:5173/admin` or `https://cafe-brew-two.vercel.app/admin`).
+* **Visual Passcode Protection**: Locked behind an elegant, dark obsidian numeric/text passcode gateway.
+  * **Standard Passcode**: `noir` (case-sensitive).
+* **⚡ Developer / Testing Auto-Bypass Mode**:
+  * You can instantly skip the passcode screen during development and testing by appending `?bypass=noir` to your URL!
+  * **URL Example**: `http://localhost:5173/admin?bypass=noir`
+
+### 📋 Main Operational Modules
+
+#### 1. 📦 Orders Management (Active preparation queue)
+* Displays every guest order sorted chronologically with **newest orders appearing first**.
+* **Identity Indicators**: Shows the Guest's Name, Phone Number, and their physical location (**Table Number / Seat location**).
+* **Live Billing Status**:
+  * `💳 Paid (Direct)` *(Emerald Green Badge)*: Order paid immediately online during checkout.
+  * `💵 Bill to Table` *(Warm Gold Badge)*: Order placed on the customer's active tab to be settled later.
+* **Order Action Pipeline**: Progress tickets in real-time through the kitchen queue:
+  * Click **`Start Prep`**: Moves status from `Pending` ➔ `Preparing`.
+  * Click **`Mark Served`**: Moves status from `Preparing` ➔ `Served`.
+  * Click **`Delete`**: Voids/removes the order card instantly from the live screen.
+
+#### 2. 🪑 Reservation Log
+* Tracks all seat bookings and special occasion reservations submitted via the site.
+* Displays Guest name, Contact info, Date & Time, Size of party, and Custom notes.
+* Quick clear button to resolve or delete reservations.
+
+#### 3. 📨 Contact Feedback Panel
+* Aggregates all contact feedback and inquiry submissions.
+* Review guest names, email, subjects, and text messages instantly.
+
 ## 🚀 Setup & Launch Instructions
 
 ### 1. Clone & Install Dependencies
